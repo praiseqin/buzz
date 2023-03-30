@@ -15,13 +15,15 @@ interface Segments {
 
 export default function Home() {
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [model, setModel] = useState<string>("base.en");
+  const [model, setModel] = useState<string>("tiny.en");
   const [isVideo, setIsVideo] = useState<boolean>(false);
   const [segments, setSegments] = useState<Segments[]>([]);
   const [text, setText] = useState<string>("");
   const [callId, setCallId] = useState<string>("");
   const [progress, setProgress] = useState<any>(0);
   const [transcribeProgress, setTranscribeProgress] = useState<number>(0);
+
+  console.log(progress)
 
   const transcribe = () => {
     if (!videoUrl) return;
