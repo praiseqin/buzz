@@ -118,7 +118,7 @@ export default function Home() {
             </select>
             <button
               onClick={transcribe}
-              className="w-1/6 h-12 bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-200"
+              className="w-1/6 h-12 outline-none bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-200"
             >
               Transcribe
             </button>
