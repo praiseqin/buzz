@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import postData from "@/utils/transcribe";
 import { useEffect, useState } from "react";
+import { CgSpinnerAlt } from "react-icons/cg";
+import { HiCheckCircle } from "react-icons/hi";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +19,7 @@ export default function Home() {
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [model, setModel] = useState<string>("tiny.en");
   const [isVideo, setIsVideo] = useState<boolean>(false);
+  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [segments, setSegments] = useState<Segments[]>([]);
   const [text, setText] = useState<string>("");
   const [callId, setCallId] = useState<string>("");
@@ -39,6 +42,7 @@ export default function Home() {
       // @ts-ignore
       setSegments(data?.segments as any);
     });
+    setIsTranscribing(true);
   };
 
   const formatDuration = (duration: number) => {
@@ -95,7 +99,7 @@ export default function Home() {
           Buzz<span className="text-stone-700 text-3xl">AI</span>
         </h1>
         <span className="text-sm font-bold text-stone-600">
-          Swiftly Transcribe Audio
+          Swiftly Transcribe Audio, Then Analyze
         </span>
       </div>
       <div className="flex flex-col justify-center mt-8 w-10/12 gap-2">
@@ -161,7 +165,7 @@ export default function Home() {
 
         {/* make a list of segments with the text, start, and end */}
 
-        <div className="flex flex-col justify-center w-full gap-2">
+        <div className="flex flex-col justify-center w-full mt-4">
           {text.length > 0 ? (
             <div className="flex flex-row justify-start gap-4 items-center">
               <div className="flex flex-row items-center gap-2">
@@ -181,7 +185,7 @@ export default function Home() {
           ) : null}
 
           {segments?.length > 0 ? (
-            <div className="mx-auto py-8">
+            <div className="mx-auto py-4">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
                 {" "}
                 {segments?.map((segment, index) => (
@@ -193,27 +197,13 @@ export default function Home() {
                       <div className="flex-1 min-w-0">
                         <div>{segment.text}</div>
                       </div>
-                      <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 rounded text-stone-900 dark:text-white hover:cursor-pointer">
+                      <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 ring-1 ring-stone-200 rounded text-stone-900 dark:text-white select-none">
                         <div className="hover:bg-stone-200 text-stone-800 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
-                          <a
-                            title="listen"
-                            href="https://anchor.fm/s/3cbbb3b8/podcast/play/66496731/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-2-13%2F317835219-44100-2-4b7ef2ce3b981.mp3#t=0"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            🎙 {formatDuration(segment.start)}
-                          </a>
+                          <span>🎙 {formatDuration(segment.start)}</span>
                         </div>
-                        <span className="text-stone-800 py-1 px-1">:</span>
+                        <span className="text-stone-800 py-1 px-1"> - </span>
                         <div className="hover:bg-stone-200 text-stone-800 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
-                          <a
-                            title="listen"
-                            href="https://anchor.fm/s/3cbbb3b8/podcast/play/66496731/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-2-13%2F317835219-44100-2-4b7ef2ce3b981.mp3#t=17"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            00:00:17.480
-                          </a>
+                          <span>00:00:17.480</span>
                         </div>
                       </div>
                     </div>
@@ -221,6 +211,10 @@ export default function Home() {
                 ))}
               </ul>
             </div>
+          ) : isTranscribing ? (
+            <p className="text-amber-500 items-center w-full justify-center pt-4 font-medium inline-flex gap-2">
+              Transcribing <CgSpinnerAlt className="animate-spin" />
+            </p>
           ) : (
             <p className="text-stone-400 items-center flex w-full justify-center pt-4">
               No transcript
