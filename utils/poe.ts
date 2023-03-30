@@ -17,7 +17,7 @@ const sendMessage = async (message: string) => {
 
   try {
     const response = await axios.request(config);
-    console.log(response.data.response.trim());
+    return response.data.response;
   } catch (error) {
     console.log(error);
   }

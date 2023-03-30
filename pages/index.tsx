@@ -31,8 +31,6 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzeText, setAnalyzeText] = useState<string>("");
 
-  console.log(progress);
-
   const transcribe = () => {
     if (!videoUrl) return;
     postData(
@@ -43,7 +41,7 @@ export default function Home() {
       setProgress,
       setCallId
     ).then((data) => {
-      console.log(data);
+      // console.log(data);
       // @ts-ignore
       setSegments(data?.segments as any);
     });
@@ -102,9 +100,11 @@ export default function Home() {
     }
   }, [segments]);
 
+  // console.log(poeTextRes);
+
   return (
-    <div className="flex flex-col items-center mt-12">
-      <div className="flex w-10/12 items-start flex-col">
+    <div className="flex flex-col items-center">
+      <div className="flex w-10/12 items-start flex-col mt-12">
         <h1
           className="text-4xl font-bold
           bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-400
@@ -229,7 +229,6 @@ export default function Home() {
                         onChange={(e) => {
                           setAnalyzeText(e.target.value);
                         }}
-                        value={analyzeText}
                       />
                       <button
                         onClick={() => {
@@ -240,11 +239,11 @@ export default function Home() {
                         Analyze
                         <TbMessage2 className="w-4 h-4" />
                       </button>
-                      {poeTextRes.length <= 0 && isAnalyzing ? (
+                      {isAnalyzing ? (
                         <CgSpinner className="animate-spin text-stone-500" />
                       ) : null}
                     </div>
-                    {poeTextRes.length > 0 ? (
+                    {poeTextRes ? (
                       <span className="text-stone-500">{poeTextRes}</span>
                     ) : null}
                   </li>
