@@ -37,8 +37,7 @@ export default function Home() {
     if (!videoUrl) return;
     postData(
       videoUrl,
-      // Math.random() * Math.random() * 16,
-      10.764585912815686,
+      Math.random() * Math.random() * 16,
       isVideo,
       model,
       setProgress,
@@ -249,7 +248,17 @@ export default function Home() {
                         <HiLightningBolt className="w-3 h-3" />
                       </button>
                       {/* create a radio with two buttons like the one above with only an icon and it's a square */}
-                      <button className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300">
+                      <button
+                        onClick={() => {
+                          setPoeModel("a2");
+                        }}
+                        className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        style={{
+                          filter: `grayscale(${
+                            poeModel == "a2" ? "0%" : "100%"
+                          })`,
+                        }}
+                      >
                         <Image
                           src={
                             "https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FanthropicAvatarBeige.426c3b88.png&w=96&q=75"
@@ -261,12 +270,22 @@ export default function Home() {
                           style={{ width: "100%", height: "auto" }}
                         />
                       </button>
-                      <button className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300">
+                      <button
+                        onClick={() => {
+                          setPoeModel("capybara");
+                        }}
+                        className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        style={{
+                          filter: `grayscale(${
+                            poeModel == "capybara" ? "0%" : "100%"
+                          })`,
+                        }}
+                      >
                         <Image
                           src={
                             "https://poe.com/_next/image?url=/_next/static/media/chatGPTAvatar.04ed8443.png&w=96&q=75"
                           }
-                          alt="chatp-gpt"
+                          alt="chatgpt"
                           width="0"
                           height="0"
                           sizes="100vw"
