@@ -11,7 +11,7 @@ async function postData(
 ): Promise<void> {
   try {
     const postResponse: AxiosResponse = await axios.post(
-      `https://cors-anywhere.herokuapp.com/https://ayaanzaveri--whisper-audio-transcriber-api-fastapi-app.modal.run/api/transcribe?src_url=${url}&title_slug=${title}&is_video=${isVideo}&model=${model}`
+      `https://ayaanzaveri--whisper-audio-transcriber-api-fastapi-app.modal.run/api/transcribe?src_url=${url}&title_slug=${title}&is_video=${isVideo}&model=${model}`
     );
 
     console.log('model', model)
@@ -26,7 +26,7 @@ async function postData(
       statusResponse = await axios.get(
         `https://ayaanzaveri--whisper-audio-transcriber-api-fastapi-app.modal.run/api/status/${postResponse.data["call_id"]}`
       );
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // wait 1 second before checking again
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // wait 1 second before checking again
       console.log(statusResponse?.data);
       setProgress(statusResponse?.data);
     } while (!statusResponse?.data["finished"]);

@@ -102,13 +102,14 @@ export default function Home() {
             {/* make an input with a button */}
             <input
               type="text"
-              className="w-full h-12 pl-4 border-none shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
+              className="w-full h-12 pl-4 border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
               placeholder="Video URL"
               onChange={(e) => setVideoUrl(e.target.value)}
             />
             <select
-              className="w-1/6 h-12 bg-stone-100 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-200 outline-none"
+              className="w-1/6 h-12 bg-stone-100 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
               onChange={(e) => setModel(e.target.value)}
+              value={model}
             >
               <option value="tiny.en">Tiny</option>
               <option value="base.en">Base</option>
@@ -118,7 +119,7 @@ export default function Home() {
             </select>
             <button
               onClick={transcribe}
-              className="w-1/6 h-12 outline-none bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-200"
+              className="w-1/6 h-12 outline-none bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-300"
             >
               Transcribe
             </button>
