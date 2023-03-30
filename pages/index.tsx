@@ -4,8 +4,10 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import postData from "@/utils/transcribe";
 import { useEffect, useState } from "react";
-import { CgSpinnerAlt } from "react-icons/cg";
+import { CgSpinner } from "react-icons/cg";
 import { HiCheckCircle } from "react-icons/hi";
+import { TbMessage2 } from "react-icons/tb";
+import sendMessage from "@/utils/poe";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +27,9 @@ export default function Home() {
   const [callId, setCallId] = useState<string>("");
   const [progress, setProgress] = useState<any>(0);
   const [transcribeProgress, setTranscribeProgress] = useState<number>(0);
+  const [poeTextRes, setPoeTextRes] = useState<string>("");
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+  const [analyzeText, setAnalyzeText] = useState<string>("");
 
   console.log(progress);
 
@@ -43,6 +48,15 @@ export default function Home() {
       setSegments(data?.segments as any);
     });
     setIsTranscribing(true);
+  };
+
+  const poe = (message: string) => {
+    setIsAnalyzing(true);
+    sendMessage(message).then((data) => {
+      setPoeTextRes(data as any);
+      console.log(data);
+    });
+    setIsAnalyzing(false);
   };
 
   const formatDuration = (duration: number) => {
@@ -99,7 +113,7 @@ export default function Home() {
           Buzz<span className="text-stone-700 text-3xl">AI</span>
         </h1>
         <span className="text-sm font-bold text-stone-600">
-          Swiftly Transcribe Audio, Then Analyze
+          Swiftly Transcribe Audio
         </span>
       </div>
       <div className="flex flex-col justify-center mt-8 w-10/12 gap-2">
@@ -113,7 +127,7 @@ export default function Home() {
               onChange={(e) => setVideoUrl(e.target.value)}
             />
             <select
-              className="w-1/6 h-12 bg-stone-100 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
+              className="w-1/6 h-12 bg-stone-100 border-none font-medium ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
               onChange={(e) => setModel(e.target.value)}
               value={model}
             >
@@ -183,37 +197,63 @@ export default function Home() {
               </button>
             </div>
           ) : null}
-
+          {/* poe("What is the capital of Brazil?") */}
           {segments?.length > 0 ? (
             <div className="mx-auto py-4">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
                 {" "}
                 {segments?.map((segment, index) => (
                   <li
-                    className="pb-3 sm:pb-4 px-6 py-4 border-b border-stone-200 w-full rounded-t-lg"
+                    className="pb-3 sm:pb-4 px-6 py-4 relative border-b border-stone-200 w-full rounded-t-lg flex flex-col gap-2"
                     key={index}
                   >
+                    {/* add a circular button to the top right corner */}
                     <div className="flex items-center space-x-4">
                       <div className="flex-1 min-w-0">
                         <div>{segment.text}</div>
                       </div>
                       <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 ring-1 ring-stone-200 rounded text-stone-900 dark:text-white select-none">
-                        <div className="hover:bg-stone-200 text-stone-800 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
+                        <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
                           <span>🎙 {formatDuration(segment.start)}</span>
                         </div>
-                        <span className="text-stone-800 py-1 px-1"> - </span>
-                        <div className="hover:bg-stone-200 text-stone-800 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
+                        <span className="text-stone-600 py-1 px-1"> - </span>
+                        <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
                           <span>00:00:17.480</span>
                         </div>
                       </div>
                     </div>
+                    <div className="flex flex-row gap-2 items-center">
+                      <input
+                        type="text"
+                        className="px-2 gap-1 w-min text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
+                        onChange={(e) => {
+                          setAnalyzeText(e.target.value);
+                        }}
+                        value={analyzeText}
+                      />
+                      <button
+                        onClick={() => {
+                          poe(`"${segment.text}" ${analyzeText}`);
+                        }}
+                        className="px-2 gap-1 w-min text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                      >
+                        Analyze
+                        <TbMessage2 className="w-4 h-4" />
+                      </button>
+                      {poeTextRes.length <= 0 && isAnalyzing ? (
+                        <CgSpinner className="animate-spin text-stone-500" />
+                      ) : null}
+                    </div>
+                    {poeTextRes.length > 0 ? (
+                      <span className="text-stone-500">{poeTextRes}</span>
+                    ) : null}
                   </li>
                 ))}
               </ul>
             </div>
           ) : isTranscribing ? (
-            <p className="text-amber-500 items-center w-full justify-center pt-4 font-medium inline-flex gap-2">
-              Transcribing <CgSpinnerAlt className="animate-spin" />
+            <p className="text-amber-500 items-center w-full justify-center font-medium inline-flex gap-2">
+              Transcribing <CgSpinner className="animate-spin" />
             </p>
           ) : (
             <p className="text-stone-400 items-center flex w-full justify-center pt-4">
