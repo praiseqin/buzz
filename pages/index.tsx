@@ -23,7 +23,7 @@ export default function Home() {
   const [progress, setProgress] = useState<any>(0);
   const [transcribeProgress, setTranscribeProgress] = useState<number>(0);
 
-  console.log(progress)
+  console.log(progress);
 
   const transcribe = () => {
     if (!videoUrl) return;
@@ -160,7 +160,26 @@ export default function Home() {
         ) : null}
 
         {/* make a list of segments with the text, start, and end */}
+
         <div className="flex flex-col justify-center w-full gap-2">
+          {text.length > 0 ? (
+            <div className="flex flex-row justify-start gap-4 items-center">
+              <div className="flex flex-row items-center gap-2">
+                <span className="font-bold text-stone-600">
+                  Transcribed Text
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(text);
+                }}
+                className="w-24 h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+              >
+                Copy Text
+              </button>
+            </div>
+          ) : null}
+
           {segments?.length > 0 ? (
             <div className="mx-auto py-8">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
