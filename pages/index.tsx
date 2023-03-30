@@ -5,7 +5,7 @@ import styles from "@/styles/Home.module.css";
 import postData from "@/utils/transcribe";
 import { useEffect, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
-import { HiCheckCircle } from "react-icons/hi";
+import { HiCheckCircle, HiLightningBolt, HiClipboard } from "react-icons/hi";
 import { TbMessage2 } from "react-icons/tb";
 import sendMessage from "@/utils/poe";
 
@@ -30,12 +30,15 @@ export default function Home() {
   const [poeTextRes, setPoeTextRes] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analyzeText, setAnalyzeText] = useState<string>("");
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
+  const [poeModel, setPoeModel] = useState<string>("a2");
 
   const transcribe = () => {
     if (!videoUrl) return;
     postData(
       videoUrl,
-      Math.random() * Math.random() * 16,
+      // Math.random() * Math.random() * 16,
+      10.764585912815686,
       isVideo,
       model,
       setProgress,
@@ -50,11 +53,14 @@ export default function Home() {
 
   const poe = (message: string) => {
     setIsAnalyzing(true);
-    sendMessage(message).then((data) => {
-      setPoeTextRes(data as any);
-      console.log(data);
-    });
-    setIsAnalyzing(false);
+    sendMessage(message, poeModel)
+      .then((data) => {
+        setPoeTextRes(data as any);
+        console.log(data);
+      })
+      .finally(() => {
+        setIsAnalyzing(false);
+      });
   };
 
   const formatDuration = (duration: number) => {
@@ -191,9 +197,10 @@ export default function Home() {
                 onClick={() => {
                   navigator.clipboard.writeText(text);
                 }}
-                className="w-24 h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
               >
                 Copy Text
+                <HiClipboard />
               </button>
             </div>
           ) : null}
@@ -225,25 +232,52 @@ export default function Home() {
                     <div className="flex flex-row gap-2 items-center">
                       <input
                         type="text"
-                        className="px-2 gap-1 w-min text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
+                        className="px-2 gap-1 w-1/4 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
                         onChange={(e) => {
                           setAnalyzeText(e.target.value);
                         }}
                       />
                       <button
                         onClick={() => {
+                          setPoeTextRes("");
+                          setCurrentSegmentIndex(index);
                           poe(`"${segment.text}" ${analyzeText}`);
                         }}
-                        className="px-2 gap-1 w-min text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="px-2 gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
                       >
-                        Analyze
-                        <TbMessage2 className="w-4 h-4" />
+                        Quick Analyze
+                        <HiLightningBolt className="w-3 h-3" />
                       </button>
-                      {isAnalyzing ? (
+                      {/* create a radio with two buttons like the one above with only an icon and it's a square */}
+                      <button className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300">
+                        <Image
+                          src={
+                            "https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FanthropicAvatarBeige.426c3b88.png&w=96&q=75"
+                          }
+                          alt="claude"
+                          width="0"
+                          height="0"
+                          sizes="100vw"
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      </button>
+                      <button className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300">
+                        <Image
+                          src={
+                            "https://poe.com/_next/image?url=/_next/static/media/chatGPTAvatar.04ed8443.png&w=96&q=75"
+                          }
+                          alt="chatp-gpt"
+                          width="0"
+                          height="0"
+                          sizes="100vw"
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      </button>
+                      {isAnalyzing && currentSegmentIndex === index ? (
                         <CgSpinner className="animate-spin text-stone-500" />
                       ) : null}
                     </div>
-                    {poeTextRes ? (
+                    {poeTextRes && currentSegmentIndex === index ? (
                       <span className="text-stone-500">{poeTextRes}</span>
                     ) : null}
                   </li>

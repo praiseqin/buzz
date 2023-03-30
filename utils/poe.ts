@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const sendMessage = async (message: string) => {
+const sendMessage = async (message: string, model: any) => {
   const data = JSON.stringify({
     message: message,
   });
@@ -8,7 +8,7 @@ const sendMessage = async (message: string) => {
   const config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: "https://poeapi-1-x0607863.deta.app/message",
+    url: `https://poeapi-1-x0607863.deta.app/message?model=${model}`,
     headers: {
       "Content-Type": "application/json",
     },
