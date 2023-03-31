@@ -150,8 +150,8 @@ export default function Home() {
             </button>
           </div>
           {/* make a checkbox */}
-          <div className="relative flex gap-x-2.5">
-            <div className="flex h-6 items-center">
+          <div className="relative flex flex-col">
+            <div className="flex h-6 items-center gap-x-2.5">
               <input
                 id="comments"
                 name="comments"
@@ -160,12 +160,23 @@ export default function Home() {
                 onChange={() => setIsVideo(!isVideo)}
                 className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
               />
+              <div className="text-sm leading-6">
+                <label
+                  htmlFor="comments"
+                  className="font-medium text-stone-700"
+                >
+                  YTDLP Supported
+                </label>
+              </div>
             </div>
-            <div className="text-sm leading-6">
-              <label htmlFor="comments" className="font-medium text-stone-700">
-                YouTube Video
-              </label>
-            </div>
+            <a
+              href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
+              target="_blank"
+            >
+              <span className="text-xs text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
+                YTDLP Supported Sites
+              </span>
+            </a>
           </div>
         </div>
 
@@ -297,7 +308,9 @@ export default function Home() {
                       ) : null}
                     </div>
                     {poeTextRes && currentSegmentIndex === index ? (
-                      <span className="text-stone-500">{poeTextRes}</span>
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-amber-500">
+                        {poeTextRes}
+                      </span>
                     ) : null}
                   </li>
                 ))}

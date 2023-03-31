@@ -26,7 +26,7 @@ async function postData(
       statusResponse = await axios.get(
         `https://ayaanzaveri--whisper-audio-transcriber-api-fastapi-app.modal.run/api/status/${postResponse.data["call_id"]}`
       );
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // wait 1 second before checking again
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // wait 1 second before checking again
       // console.log(statusResponse?.data);
       setProgress(statusResponse?.data);
     } while (!statusResponse?.data["finished"]);
