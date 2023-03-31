@@ -43,8 +43,7 @@ export default function Home() {
     if (!videoUrl) return;
     postData(
       videoUrl,
-      // Math.random() * Math.random() * 16,
-      3.288466671880669,
+      Math.random() * Math.random() * 16,
       isVideo,
       model,
       setProgress,
