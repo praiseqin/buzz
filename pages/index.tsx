@@ -5,13 +5,19 @@ import styles from "@/styles/Home.module.css";
 import postData from "@/utils/transcribe";
 import { useEffect, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
-import { HiCheckCircle, HiLightningBolt, HiClipboard } from "react-icons/hi";
+import {
+  HiCheckCircle,
+  HiLightningBolt,
+  HiClipboard,
+  HiDownload,
+  HiDocumentDownload,
+} from "react-icons/hi";
 import { TbMessage2 } from "react-icons/tb";
 import sendMessage from "@/utils/poe";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface Segments {
+interface Segment {
   text: string;
   start: number;
   end: number;
@@ -22,7 +28,7 @@ export default function Home() {
   const [model, setModel] = useState<string>("tiny.en");
   const [isVideo, setIsVideo] = useState<boolean>(false);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  const [segments, setSegments] = useState<Segments[]>([]);
+  const [segments, setSegments] = useState<any[]>([]);
   const [text, setText] = useState<string>("");
   const [callId, setCallId] = useState<string>("");
   const [progress, setProgress] = useState<any>(0);
@@ -37,7 +43,8 @@ export default function Home() {
     if (!videoUrl) return;
     postData(
       videoUrl,
-      Math.random() * Math.random() * 16,
+      // Math.random() * Math.random() * 16,
+      3.288466671880669,
       isVideo,
       model,
       setProgress,
@@ -107,6 +114,76 @@ export default function Home() {
 
   // console.log(poeTextRes);
 
+  function segmentsToVtt(segments: Segment[]): string {
+    let vttString = "WEBVTT\n\n";
+
+    segments.forEach((segment, index) => {
+      const startTime = formatTime(segment.start);
+      const endTime = formatTime(segment.end);
+      vttString += `${index + 1}\n${startTime} --> ${endTime}\n${
+        segment.text
+      }\n\n`;
+    });
+
+    return vttString;
+  }
+
+  function segmentsToSrt(segments: Segment[]): string {
+    let srtString = "";
+
+    segments.forEach((segment, index) => {
+      const startTime = formatTime(segment.start, true);
+      const endTime = formatTime(segment.end, true);
+      srtString += `${index + 1}\n${startTime} --> ${endTime}\n${
+        segment.text
+      }\n\n`;
+    });
+
+    return srtString;
+  }
+
+  function formatTime(seconds: number, isSrt: boolean = false): string {
+    const date = new Date(seconds * 1000);
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+    const secondsFormatted = date.getUTCSeconds().toString().padStart(2, "0");
+    const millisecondsFormatted = (seconds - Math.floor(seconds))
+      .toFixed(3)
+      .slice(2);
+
+    if (isSrt) {
+      return `${hours}:${minutes}:${secondsFormatted},${millisecondsFormatted}`;
+    } else {
+      return `${hours}:${minutes}:${secondsFormatted}.${millisecondsFormatted}`;
+    }
+  }
+
+  function downloadVtt(segments: Segment[], filename: string): void {
+    const vttString = segmentsToVtt(segments);
+    const blob = new Blob([vttString], { type: "text/vtt" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.vtt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function downloadSrt(segments: Segment[], filename: string): void {
+    const srtString = segmentsToSrt(segments);
+    const blob = new Blob([srtString], { type: "text/srt" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.srt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
     <div className="flex flex-col items-center">
       <div className="flex w-10/12 items-start flex-col mt-12">
@@ -172,8 +249,9 @@ export default function Home() {
             <a
               href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
               target="_blank"
+              className="w-full"
             >
-              <span className="text-xs text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
+              <span className="text-xs w-full text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
                 YTDLP Supported Sites
               </span>
             </a>
@@ -211,6 +289,24 @@ export default function Home() {
               >
                 Copy Text
                 <HiClipboard />
+              </button>
+              <button
+                onClick={() => {
+                  downloadVtt(segments, "transcript");
+                }}
+                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+              >
+                Download VTT
+                <HiDocumentDownload />
+              </button>
+              <button
+                onClick={() => {
+                  downloadSrt(segments, "transcript");
+                }}
+                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+              >
+                Download SRT
+                <HiDocumentDownload />
               </button>
             </div>
           ) : null}
