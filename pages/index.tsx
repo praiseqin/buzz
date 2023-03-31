@@ -403,7 +403,7 @@ export default function Home() {
                       ) : null}
                     </div>
                     {poeTextRes && currentSegmentIndex === index ? (
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-amber-500">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500">
                         {poeTextRes}
                       </span>
                     ) : null}
