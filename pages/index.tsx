@@ -86,12 +86,11 @@ export default function Home() {
   };
 
   const calculateTranscribeProgress = () => {
-    const totalProgress = progress["total_segments"] * 2;
+    const currentProgress = Math.floor(
+      (progress["done_segments"] / (progress["total_segments"] || 1)) * 100
+    );
 
-    const currentProgress =
-      progress["total_segments"] + progress["done_segments"];
-
-    setTranscribeProgress((currentProgress / totalProgress) * 100);
+    setTranscribeProgress(currentProgress);
   };
 
   useEffect(() => {
@@ -183,9 +182,11 @@ export default function Home() {
     document.body.removeChild(link);
   }
 
+  console.log(transcribeProgress, isTranscribing);
+
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex w-10/12 items-start flex-col mt-12">
+    <div className="flex flex-col items-center font-inter">
+      <div className="flex w-10/12 items-start flex-col mt-12 select-none">
         <h1
           className="text-4xl font-bold
           bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-400
@@ -193,7 +194,7 @@ export default function Home() {
         >
           Buzz<span className="text-stone-700 text-3xl">AI</span>
         </h1>
-        <span className="text-sm font-bold text-stone-600">
+        <span className="text-sm font-semibold text-stone-600">
           Swiftly Transcribe Audio
         </span>
       </div>
@@ -208,7 +209,7 @@ export default function Home() {
               onChange={(e) => setVideoUrl(e.target.value)}
             />
             <select
-              className="w-1/6 h-12 bg-stone-100 border-none font-medium ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
+              className="w-1/6 h-12 bg-stone-100 select-none border-none font-medium ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
               onChange={(e) => setModel(e.target.value)}
               value={model}
             >
@@ -220,7 +221,7 @@ export default function Home() {
             </select>
             <button
               onClick={transcribe}
-              className="w-1/6 h-12 outline-none bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-300"
+              className="w-1/6 h-12 outline-none select-none ring-amber-500 bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-300"
             >
               Transcribe
             </button>
@@ -236,7 +237,7 @@ export default function Home() {
                 onChange={() => setIsVideo(!isVideo)}
                 className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
               />
-              <div className="text-sm leading-6">
+              <div className="text-sm leading-6 select-none">
                 <label
                   htmlFor="comments"
                   className="font-medium text-stone-700"
@@ -248,9 +249,9 @@ export default function Home() {
             <a
               href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
               target="_blank"
-              className="w-full"
+              className="w-max"
             >
-              <span className="text-xs w-full text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
+              <span className="text-xs select-none text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
                 YTDLP Supported Sites
               </span>
             </a>
@@ -274,7 +275,7 @@ export default function Home() {
 
         <div className="flex flex-col justify-center w-full mt-4">
           {text.length > 0 ? (
-            <div className="flex flex-row justify-start gap-4 items-center">
+            <div className="flex flex-row justify-start gap-4 items-center select-none">
               <div className="flex flex-row items-center gap-2">
                 <span className="font-bold text-stone-600">
                   Transcribed Text
@@ -311,7 +312,7 @@ export default function Home() {
           ) : null}
           {/* poe("What is the capital of Brazil?") */}
           {segments?.length > 0 ? (
-            <div className="mx-auto py-4">
+            <div className="mx-auto py-4 w-full">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
                 {" "}
                 {segments?.map((segment, index) => (
@@ -348,7 +349,7 @@ export default function Home() {
                           setCurrentSegmentIndex(index);
                           poe(`"${segment.text}" ${analyzeText}`);
                         }}
-                        className="px-2 gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
                       >
                         Quick Analyze
                         <HiLightningBolt className="w-3 h-3" />
@@ -358,7 +359,7 @@ export default function Home() {
                         onClick={() => {
                           setPoeModel("a2");
                         }}
-                        className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
                         style={{
                           filter: `grayscale(${
                             poeModel == "a2" ? "0%" : "100%"
@@ -380,7 +381,7 @@ export default function Home() {
                         onClick={() => {
                           setPoeModel("capybara");
                         }}
-                        className="gap-1 text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
                         style={{
                           filter: `grayscale(${
                             poeModel == "capybara" ? "0%" : "100%"
@@ -411,9 +412,39 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-          ) : isTranscribing ? (
+          ) : isTranscribing &&
+            (transcribeProgress == 0 ||
+              Number.isNaN(Number(transcribeProgress))) &&
+              Object.keys(progress).length == 1 ? (
+            <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+              Downloading{" "}
+              <div className="animate-spin">
+                <div className="animate-spin">
+                  <CgSpinner className="animate-spin" />
+                </div>
+              </div>
+            </p>
+          ) : progress["total_segments"] >= 0 &&
+            progress["done_segments"] <= 0 ? (
+            <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+              Analyzing {progress["total_segments"]} Segments
+              <div className="animate-spin">
+                <div className="animate-spin">
+                  <CgSpinner className="animate-spin" />
+                </div>
+              </div>
+            </p>
+          ) : isTranscribing &&
+            transcribeProgress > 0 &&
+            transcribeProgress != 100 ? (
             <p className="text-amber-500 items-center w-full justify-center font-medium inline-flex gap-2">
-              Transcribing <CgSpinner className="animate-spin" />
+              Transcribing{" "}
+              {transcribeProgress ? `${transcribeProgress}%` : "0%"}
+              <div className="animate-spin">
+                <div className="animate-spin">
+                  <CgSpinner className="animate-spin" />
+                </div>
+              </div>
             </p>
           ) : (
             <p className="text-stone-400 items-center flex w-full justify-center pt-4">
