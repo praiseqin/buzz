@@ -64,7 +64,7 @@ export default function Home() {
     setIsAnalyzing(true);
     sendMessage(message, poeModel)
       .then((data) => {
-        setPoeTextRes(data as any);
+        setPoeTextRes(data);
         // console.log(data);
       })
       .finally(() => {
@@ -218,8 +218,6 @@ export default function Home() {
               <option value="tiny.en">Tiny</option>
               <option value="base.en">Base</option>
               <option value="small.en">Small</option>
-              <option value="medium.en">Medium</option>
-              <option value="large">Large</option>
             </select>
             <button
               onClick={transcribe}
