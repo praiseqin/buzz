@@ -345,6 +345,7 @@ export default function Home() {
                         onChange={(e) => {
                           setAnalyzeText(e.target.value);
                         }}
+                        placeholder="Ask a question..."
                       />
                       <button
                         onClick={() => {
@@ -430,7 +431,7 @@ export default function Home() {
           ) : progress["total_segments"] >= 0 &&
             progress["done_segments"] <= 0 ? (
             <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
-              Analyzing {progress["total_segments"]} Segments
+              Loading {progress["total_segments"]} Segments
               <div className="animate-spin">
                 <div className="animate-spin">
                   <CgSpinner className="animate-spin" />
