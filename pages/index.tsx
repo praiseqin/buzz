@@ -41,6 +41,7 @@ export default function Home() {
 
   const transcribe = () => {
     if (!videoUrl) return;
+    setIsTranscribing(true);
     postData(
       videoUrl,
       Math.random() * Math.random() * 16,
@@ -48,12 +49,15 @@ export default function Home() {
       model,
       setProgress,
       setCallId
-    ).then((data) => {
-      // console.log(data);
-      // @ts-ignore
-      setSegments(data?.segments as any);
-    });
-    setIsTranscribing(true);
+    )
+      .then((data) => {
+        // console.log(data);
+        // @ts-ignore
+        setSegments(data?.segments as any);
+      })
+      .finally(() => {
+        setIsTranscribing(false);
+      });
   };
 
   const poe = (message: string) => {
@@ -274,7 +278,7 @@ export default function Home() {
         {/* make a list of segments with the text, start, and end */}
 
         <div className="flex flex-col justify-center w-full mt-4">
-          {text.length > 0 ? (
+          {text.length > 0 && isTranscribing == false ? (
             <div className="flex flex-row justify-start gap-4 items-center select-none">
               <div className="flex flex-row items-center gap-2">
                 <span className="font-bold text-stone-600">
@@ -311,7 +315,7 @@ export default function Home() {
             </div>
           ) : null}
           {/* poe("What is the capital of Brazil?") */}
-          {segments?.length > 0 ? (
+          {segments?.length > 0 && isTranscribing == false ? (
             <div className="mx-auto py-4 w-full">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
                 {" "}
@@ -415,7 +419,7 @@ export default function Home() {
           ) : isTranscribing &&
             (transcribeProgress == 0 ||
               Number.isNaN(Number(transcribeProgress))) &&
-              Object.keys(progress).length == 1 ? (
+            Object.keys(progress).length == 1 ? (
             <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
               Downloading{" "}
               <div className="animate-spin">
