@@ -16,7 +16,7 @@ async function postData(
 
     // console.log('model', model)
 
-    console.log(postResponse.data);
+    // console.log(postResponse.data);
 
     setCallId(postResponse.data["call_id"]);
 
@@ -42,7 +42,7 @@ async function postData(
         `https://ayaanzaveri--whisper-audio-transcriber-api-fastapi-app.modal.run/api/audio/${title}`
       );
       finalData = audioResponse.data;
-      console.log(finalData);
+      // console.log(finalData);
     } while (!finalData["segments"]);
 
     return finalData;

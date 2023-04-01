@@ -65,7 +65,7 @@ export default function Home() {
     sendMessage(message, poeModel)
       .then((data) => {
         setPoeTextRes(data as any);
-        console.log(data);
+        // console.log(data);
       })
       .finally(() => {
         setIsAnalyzing(false);
@@ -185,8 +185,6 @@ export default function Home() {
     link.click();
     document.body.removeChild(link);
   }
-
-  console.log(transcribeProgress, isTranscribing);
 
   return (
     <div className="flex flex-col items-center font-inter">
@@ -339,7 +337,9 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">{index}</div>
+                    <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">
+                      {index}
+                    </div>
                     <div className="flex flex-row gap-2 items-center">
                       <input
                         type="text"
