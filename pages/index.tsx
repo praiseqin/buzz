@@ -339,6 +339,7 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
+                    <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">{index}</div>
                     <div className="flex flex-row gap-2 items-center">
                       <input
                         type="text"
