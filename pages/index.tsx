@@ -26,6 +26,7 @@ interface Segment {
 export default function Home() {
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [model, setModel] = useState<string>("tiny.en");
+  const [withTimestamps, setWithTimestamps] = useState<boolean>(false);
   const [isVideo, setIsVideo] = useState<boolean>(false);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [segments, setSegments] = useState<any[]>([]);
@@ -42,18 +43,11 @@ export default function Home() {
   const transcribe = () => {
     if (!videoUrl) return;
     setIsTranscribing(true);
-    postData(
-      videoUrl,
-      Math.random() * Math.random() * 16,
-      isVideo,
-      model,
-      setProgress,
-      setCallId
-    )
+    postData(videoUrl, withTimestamps, model)
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         // @ts-ignore
-        setSegments(data?.segments as any);
+        setSegments(data.data[0] as any);
       })
       .finally(() => {
         setIsTranscribing(false);
@@ -186,6 +180,12 @@ export default function Home() {
     document.body.removeChild(link);
   }
 
+  useEffect(() => {
+    if (segments?.length > 0) {
+      console.log(segments);
+    }
+  }, [segments]);
+
   return (
     <div className="flex flex-col items-center font-inter">
       <div className="flex w-10/12 items-start flex-col mt-12 select-none">
@@ -227,14 +227,43 @@ export default function Home() {
             </button>
           </div>
           {/* make a checkbox */}
-          <div className="relative flex flex-col">
+          <div className="flex flex-row gap-x-6">
+            <div className="relative flex flex-col">
+              <div className="flex h-6 items-center gap-x-2.5">
+                <input
+                  id="comments"
+                  name="comments"
+                  type="checkbox"
+                  checked={isVideo}
+                  onChange={() => setIsVideo(!isVideo)}
+                  className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
+                />
+                <div className="text-sm leading-6 select-none">
+                  <label
+                    htmlFor="comments"
+                    className="font-medium text-stone-700"
+                  >
+                    YTDLP Supported
+                  </label>
+                </div>
+              </div>
+              <a
+                href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
+                target="_blank"
+                className="w-max"
+              >
+                <span className="text-xs select-none text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
+                  YTDLP Supported Sites
+                </span>
+              </a>
+            </div>
             <div className="flex h-6 items-center gap-x-2.5">
               <input
                 id="comments"
                 name="comments"
                 type="checkbox"
-                checked={isVideo}
-                onChange={() => setIsVideo(!isVideo)}
+                checked={withTimestamps}
+                onChange={() => setWithTimestamps(!withTimestamps)}
                 className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
               />
               <div className="text-sm leading-6 select-none">
@@ -242,19 +271,10 @@ export default function Home() {
                   htmlFor="comments"
                   className="font-medium text-stone-700"
                 >
-                  YTDLP Supported
+                  Timestamps
                 </label>
               </div>
             </div>
-            <a
-              href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
-              target="_blank"
-              className="w-max"
-            >
-              <span className="text-xs select-none text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
-                YTDLP Supported Sites
-              </span>
-            </a>
           </div>
         </div>
 
@@ -341,7 +361,7 @@ export default function Home() {
                     <div className="flex flex-row gap-2 items-center">
                       <input
                         type="text"
-                        className="px-2 gap-1 w-1/4 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
+                        className="px-2 gap-1 w-1/4 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded transition duration-300"
                         onChange={(e) => {
                           setAnalyzeText(e.target.value);
                         }}
@@ -353,7 +373,7 @@ export default function Home() {
                           setCurrentSegmentIndex(index);
                           poe(`"${segment.text}" ${analyzeText}`);
                         }}
-                        className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
                       >
                         Quick Analyze
                         <HiLightningBolt className="w-3 h-3" />
@@ -363,7 +383,7 @@ export default function Home() {
                         onClick={() => {
                           setPoeModel("a2");
                         }}
-                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
                         style={{
                           filter: `grayscale(${
                             poeModel == "a2" ? "0%" : "100%"
@@ -385,7 +405,7 @@ export default function Home() {
                         onClick={() => {
                           setPoeModel("capybara");
                         }}
-                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
                         style={{
                           filter: `grayscale(${
                             poeModel == "capybara" ? "0%" : "100%"
