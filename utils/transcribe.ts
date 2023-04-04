@@ -1,14 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import ytdl from "ytdl-core";
+import { client } from "@gradio/client";
 
 async function postData(url: string, withTimestamps: boolean, model: string) {
   try {
-    const postResponse: AxiosResponse = await axios.post(
-      // `https://ayaanzaveri-whisper-api.hf.space/transcribe?video_url=${url}&model=${model}&word_timestamps=${withTimestamps}`
-      `https://ayaanzaveri-faster-whisper-api.hf.space/run/predict`,
-      {
-        data: [url],
-      }
+    const postResponse: AxiosResponse = await axios.get(
+      `https://faster-whisper-api.onrender.com/predict?url=${url}&model=${model}&with_timestamps=${withTimestamps}`
     );
 
     if (postResponse.status == 200) {

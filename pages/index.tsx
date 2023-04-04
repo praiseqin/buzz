@@ -47,7 +47,7 @@ export default function Home() {
       .then((data) => {
         console.log(data);
         // @ts-ignore
-        setSegments(data.data[0] as any);
+        setSegments(data as any);
       })
       .finally(() => {
         setIsTranscribing(false);
