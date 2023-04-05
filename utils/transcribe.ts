@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import ytdl from "ytdl-core";
-import { client } from "@gradio/client";
 
 async function postData(url: string) {
   // const payload = {

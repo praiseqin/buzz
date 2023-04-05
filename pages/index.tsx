@@ -71,6 +71,7 @@ export default function Home() {
 
   const poe = (message: string) => {
     setIsAnalyzing(true);
+    setPoeTextRes("");
     sendMessage(message, poeModel)
       .then((data) => {
         setPoeTextRes(data);
@@ -417,7 +418,11 @@ export default function Home() {
                         />
                       </button>
                       {isAnalyzing && currentSegmentIndex === index ? (
-                        <CgSpinner className="animate-spin text-stone-500" />
+                        <div className="animate-spin">
+                          <div className="animate-spin">
+                            <CgSpinner className="animate-spin text-stone-500" />
+                          </div>
+                        </div>
                       ) : null}
                     </div>
                     {poeTextRes && currentSegmentIndex === index ? (
