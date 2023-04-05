@@ -461,7 +461,7 @@ export default function Home() {
               </div>
             </p>
           ) : (
-            <p className="text-stone-400 items-center flex w-full justify-center pt-6">
+            <p className="text-stone-400 items-center flex w-full justify-center pt-4">
               No transcript
             </p>
           )}

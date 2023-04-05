@@ -8,7 +8,7 @@ const sendMessage = async (message: string, model: any) => {
   const config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: `https://poeapi-1-x0607863.deta.app/message?model=${model}`,
+    url: `https://poe-api.onrender.com/message?model=${model}`,
     headers: {
       "Content-Type": "application/json",
     },
