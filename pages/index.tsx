@@ -14,6 +14,10 @@ import {
 } from "react-icons/hi";
 import { TbMessage2 } from "react-icons/tb";
 import sendMessage from "@/utils/poe";
+import ytdl from "ytdl-core";
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,11 +29,9 @@ interface Segment {
 
 export default function Home() {
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [model, setModel] = useState<string>("tiny.en");
-  const [withTimestamps, setWithTimestamps] = useState<boolean>(false);
   const [isVideo, setIsVideo] = useState<boolean>(false);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  const [segments, setSegments] = useState<any[]>([]);
+  const [segments, setSegments] = useState<any>([]);
   const [data, setData] = useState<any>([]);
   const [text, setText] = useState<string>("");
   const [callId, setCallId] = useState<string>("");
@@ -40,15 +42,26 @@ export default function Home() {
   const [analyzeText, setAnalyzeText] = useState<string>("");
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
   const [poeModel, setPoeModel] = useState<string>("a2");
+  const [audioUrl, setAudioUrl] = useState<string>("");
+  const [currentAudioTime, setCurrentAudioTime] = useState<number>(0);
+
+  const getAudioUrlFromYoutubeUrl = (url: string) => {
+    const videoId = url.split("v=")[1];
+    axios.get(`https://pa.il.ax/streams/${videoId}`).then((res) => {
+      // console.log(res.data.audioStreams[0].url);
+      setAudioUrl(res.data.audioStreams[0].url);
+    });
+  };
 
   const transcribe = () => {
     if (!videoUrl) return;
     setIsTranscribing(true);
-    postData(videoUrl, withTimestamps, model)
+    // getAudioUrlFromYoutubeUrl(videoUrl);
+    postData(videoUrl)
       .then((data) => {
         console.log(data);
         // @ts-ignore
-        setSegments(data as any);
+        setSegments(data?.chunks as any);
         setData(data);
       })
       .finally(() => {
@@ -101,7 +114,7 @@ export default function Home() {
   useEffect(() => {
     if (segments?.length > 0) {
       const text = segments
-        .map((segment) => segment.text)
+        .map((segment: any) => segment.text)
         .join(" ")
         .replace(/(\r\n|\n|\r)/gm, " ")
         .trim();
@@ -112,12 +125,12 @@ export default function Home() {
 
   // console.log(poeTextRes);
 
-  function segmentsToVtt(segments: Segment[]): string {
+  function segmentsToVtt(segments: any[]): string {
     let vttString = "WEBVTT\n\n";
 
     segments.forEach((segment, index) => {
-      const startTime = formatTime(segment.start);
-      const endTime = formatTime(segment.end);
+      const startTime = formatTime(segment.timestamp[0]);
+      const endTime = formatTime(segment.timestamp[1]);
       vttString += `${index + 1}\n${startTime} --> ${endTime}\n${
         segment.text
       }\n\n`;
@@ -126,12 +139,12 @@ export default function Home() {
     return vttString;
   }
 
-  function segmentsToSrt(segments: Segment[]): string {
+  function segmentsToSrt(segments: any[]): string {
     let srtString = "";
 
     segments.forEach((segment, index) => {
-      const startTime = formatTime(segment.start, true);
-      const endTime = formatTime(segment.end, true);
+      const startTime = formatTime(segment.timestamp[0], true);
+      const endTime = formatTime(segment.timestamp[1], true);
       srtString += `${index + 1}\n${startTime} --> ${endTime}\n${
         segment.text
       }\n\n`;
@@ -184,7 +197,7 @@ export default function Home() {
 
   useEffect(() => {
     if (segments?.length > 0) {
-      // console.log(segments);
+      // console.log(segments?.map((segment: any) => segment.timestamp));
     }
   }, [segments, data]);
 
@@ -212,7 +225,7 @@ export default function Home() {
               placeholder="Video URL"
               onChange={(e) => setVideoUrl(e.target.value)}
             />
-            <select
+            {/* <select
               className="w-1/6 h-12 bg-stone-100 select-none border-none font-medium ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 hover:cursor-pointer appearance-none text-center rounded-md shadow-sm hover:bg-stone-200 active:bg-stone-300 transition duration-300 outline-none"
               onChange={(e) => setModel(e.target.value)}
               value={model}
@@ -220,45 +233,16 @@ export default function Home() {
               <option value="tiny.en">Tiny</option>
               <option value="base.en">Base</option>
               <option value="small.en">Small</option>
-            </select>
+            </select> */}
             <button
-              onClick={transcribe}
+              onClick={() => {
+                transcribe();
+                // getYoutubeAudioUrl();
+              }}
               className="w-1/6 h-12 outline-none select-none ring-amber-500 bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-300"
             >
               Transcribe
             </button>
-          </div>
-          {/* make a checkbox */}
-          <div className="flex flex-row gap-x-6">
-            <div className="relative flex flex-col">
-              <div className="flex h-6 items-center gap-x-2.5">
-                <input
-                  id="comments"
-                  name="comments"
-                  type="checkbox"
-                  checked={withTimestamps}
-                  onChange={() => setWithTimestamps(!withTimestamps)}
-                  className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
-                />
-                <div className="text-sm leading-6 select-none">
-                  <label
-                    htmlFor="comments"
-                    className="font-medium text-stone-700"
-                  >
-                    Timestamps
-                  </label>
-                </div>
-              </div>
-              <a
-                href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md"
-                target="_blank"
-                className="w-max"
-              >
-                <span className="text-xs select-none text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
-                  Timestamps For Each Word
-                </span>
-              </a>
-            </div>
           </div>
         </div>
 
@@ -314,12 +298,24 @@ export default function Home() {
               </button>
             </div>
           ) : null}
-          {/* poe("What is the capital of Brazil?") */}
+          {/* <div className="flex flex-col justify-center w-full mt-4"> */}
+          {/* {audioUrl?.length > 0 ? ( */}
+          {/* <AudioPlayer
+              className="rounded-lg"
+              autoPlay={false}
+              src={audioUrl}
+              onPlay={(e) => {
+                // @ts-ignore
+                setCurrentAudioTime(e?.target?.currentTime);
+              }}
+            /> */}
+          {/* ) : null} */}
+          {/* </div> */}
           {segments?.length > 0 && isTranscribing == false ? (
             <div className="mx-auto py-4 w-full">
               <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
                 {" "}
-                {segments?.map((segment, index) => (
+                {segments?.map((segment: any, index: any) => (
                   <li
                     className="pb-3 sm:pb-4 px-6 py-4 relative border-b border-stone-200 w-full rounded-t-lg flex flex-col gap-2"
                     key={index}
@@ -327,15 +323,28 @@ export default function Home() {
                     {/* add a circular button to the top right corner */}
                     <div className="flex items-center space-x-4">
                       <div className="flex-1 min-w-0">
-                        <div>{segment.text}</div>
+                        {/* map through the words array in each segment */}
+                        <div className="flex flex-row items-center gap-1">
+                          {segment?.text}
+                        </div>
                       </div>
                       <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 ring-1 ring-stone-200 rounded text-stone-900 dark:text-white select-none">
                         <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
-                          <span>🎙 {formatDuration(segment.start)}</span>
+                          <span>
+                            🎙{" "}
+                            {segment?.timestamp?.length > 0
+                              ? formatDuration(segment?.timestamp[0])
+                              : null}
+                          </span>
                         </div>
                         <span className="text-stone-600 py-1 px-1"> - </span>
                         <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
-                          <span>00:00:17.480</span>
+                          <span>
+                            {" "}
+                            {segment?.timestamp?.length > 0
+                              ? formatDuration(segment?.timestamp[1])
+                              : null}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -355,7 +364,7 @@ export default function Home() {
                         onClick={() => {
                           setPoeTextRes("");
                           setCurrentSegmentIndex(index);
-                          poe(`"${segment.text}" ${analyzeText}`);
+                          poe(`"${segment?.text}" ${analyzeText}`);
                         }}
                         className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
                       >
@@ -442,8 +451,8 @@ export default function Home() {
           //       </div>
           //     </div>
           //   </p>
-          isTranscribing && segments.length <= 0 ? (
-            <p className="text-amber-500 items-center w-full justify-center font-medium inline-flex gap-2">
+          isTranscribing ? (
+            <p className="text-amber-500 items-center w-full mt-2 justify-center font-medium inline-flex gap-2">
               Transcribing{" "}
               <div className="animate-spin">
                 <div className="animate-spin">
@@ -452,7 +461,7 @@ export default function Home() {
               </div>
             </p>
           ) : (
-            <p className="text-stone-400 items-center flex w-full justify-center pt-4">
+            <p className="text-stone-400 items-center flex w-full justify-center pt-6">
               No transcript
             </p>
           )}
