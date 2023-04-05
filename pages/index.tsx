@@ -30,6 +30,7 @@ export default function Home() {
   const [isVideo, setIsVideo] = useState<boolean>(false);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [segments, setSegments] = useState<any[]>([]);
+  const [data, setData] = useState<any>([]);
   const [text, setText] = useState<string>("");
   const [callId, setCallId] = useState<string>("");
   const [progress, setProgress] = useState<any>(0);
@@ -48,6 +49,7 @@ export default function Home() {
         console.log(data);
         // @ts-ignore
         setSegments(data as any);
+        setData(data);
       })
       .finally(() => {
         setIsTranscribing(false);
@@ -182,9 +184,9 @@ export default function Home() {
 
   useEffect(() => {
     if (segments?.length > 0) {
-      console.log(segments);
+      // console.log(segments);
     }
-  }, [segments]);
+  }, [segments, data]);
 
   return (
     <div className="flex flex-col items-center font-inter">
@@ -234,8 +236,8 @@ export default function Home() {
                   id="comments"
                   name="comments"
                   type="checkbox"
-                  checked={isVideo}
-                  onChange={() => setIsVideo(!isVideo)}
+                  checked={withTimestamps}
+                  onChange={() => setWithTimestamps(!withTimestamps)}
                   className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
                 />
                 <div className="text-sm leading-6 select-none">
@@ -243,7 +245,7 @@ export default function Home() {
                     htmlFor="comments"
                     className="font-medium text-stone-700"
                   >
-                    YTDLP Supported
+                    Timestamps
                   </label>
                 </div>
               </div>
@@ -253,27 +255,9 @@ export default function Home() {
                 className="w-max"
               >
                 <span className="text-xs select-none text-stone-500 hover:text-amber-500 active:text-amber-600 transition ease-in-out duration-300">
-                  YTDLP Supported Sites
+                  Timestamps For Each Word
                 </span>
               </a>
-            </div>
-            <div className="flex h-6 items-center gap-x-2.5">
-              <input
-                id="comments"
-                name="comments"
-                type="checkbox"
-                checked={withTimestamps}
-                onChange={() => setWithTimestamps(!withTimestamps)}
-                className="h-4 w-4 rounded border-stone-300 text-amber-500 focus:ring-amber-500"
-              />
-              <div className="text-sm leading-6 select-none">
-                <label
-                  htmlFor="comments"
-                  className="font-medium text-stone-700"
-                >
-                  Timestamps
-                </label>
-              </div>
             </div>
           </div>
         </div>
@@ -436,34 +420,31 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-          ) : isTranscribing &&
-            (transcribeProgress == 0 ||
-              Number.isNaN(Number(transcribeProgress))) &&
-            Object.keys(progress).length == 1 ? (
-            <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
-              Downloading{" "}
-              <div className="animate-spin">
-                <div className="animate-spin">
-                  <CgSpinner className="animate-spin" />
-                </div>
-              </div>
-            </p>
-          ) : progress["total_segments"] >= 0 &&
-            progress["done_segments"] <= 0 ? (
-            <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
-              Loading {progress["total_segments"]} Segments
-              <div className="animate-spin">
-                <div className="animate-spin">
-                  <CgSpinner className="animate-spin" />
-                </div>
-              </div>
-            </p>
-          ) : isTranscribing &&
-            transcribeProgress > 0 &&
-            transcribeProgress != 100 ? (
+          ) : // ) : isTranscribing &&
+          //   (transcribeProgress == 0 ||
+          //     Number.isNaN(Number(transcribeProgress))) &&
+          //   Object.keys(progress).length == 1 ? (
+          //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+          //     Downloading{" "}
+          //     <div className="animate-spin">
+          //       <div className="animate-spin">
+          //         <CgSpinner className="animate-spin" />
+          //       </div>
+          //     </div>
+          //   </p>
+          // ) : progress["total_segments"] >= 0 &&
+          //   progress["done_segments"] <= 0 ? (
+          //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+          //     Loading {progress["total_segments"]} Segments
+          //     <div className="animate-spin">
+          //       <div className="animate-spin">
+          //         <CgSpinner className="animate-spin" />
+          //       </div>
+          //     </div>
+          //   </p>
+          isTranscribing && segments.length <= 0 ? (
             <p className="text-amber-500 items-center w-full justify-center font-medium inline-flex gap-2">
               Transcribing{" "}
-              {transcribeProgress ? `${transcribeProgress}%` : "0%"}
               <div className="animate-spin">
                 <div className="animate-spin">
                   <CgSpinner className="animate-spin" />
