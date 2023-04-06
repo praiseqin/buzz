@@ -262,46 +262,47 @@ export default function Home() {
 
         {/* make a list of segments with the text, start, and end */}
 
-        <div className="flex flex-col justify-center w-full mt-4">
-          {text.length > 0 && isTranscribing == false ? (
-            <div className="flex flex-row justify-start gap-4 items-center select-none">
-              <div className="flex flex-row items-center gap-2">
-                <span className="font-bold text-stone-600">
-                  Transcribed Text
-                </span>
+        <div className="flex flex-row gap-2">
+          <div className="flex flex-col justify-center w-full mt-4">
+            {text.length > 0 && isTranscribing == false ? (
+              <div className="flex flex-row justify-start gap-4 items-center select-none">
+                <div className="flex flex-row items-center gap-2">
+                  <span className="font-bold text-stone-600">
+                    Transcribed Text
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(text);
+                  }}
+                  className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                >
+                  Copy Text
+                  <HiClipboard />
+                </button>
+                <button
+                  onClick={() => {
+                    downloadVtt(segments, "transcript");
+                  }}
+                  className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                >
+                  Download VTT
+                  <HiDocumentDownload />
+                </button>
+                <button
+                  onClick={() => {
+                    downloadSrt(segments, "transcript");
+                  }}
+                  className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
+                >
+                  Download SRT
+                  <HiDocumentDownload />
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(text);
-                }}
-                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
-              >
-                Copy Text
-                <HiClipboard />
-              </button>
-              <button
-                onClick={() => {
-                  downloadVtt(segments, "transcript");
-                }}
-                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
-              >
-                Download VTT
-                <HiDocumentDownload />
-              </button>
-              <button
-                onClick={() => {
-                  downloadSrt(segments, "transcript");
-                }}
-                className="px-3 inline-flex gap-1 items-center justify-center h-8 text-sm outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded-md shadow-sm transition duration-300"
-              >
-                Download SRT
-                <HiDocumentDownload />
-              </button>
-            </div>
-          ) : null}
-          {/* <div className="flex flex-col justify-center w-full mt-4"> */}
-          {/* {audioUrl?.length > 0 ? ( */}
-          {/* <AudioPlayer
+            ) : null}
+            {/* <div className="flex flex-col justify-center w-full mt-4"> */}
+            {/* {audioUrl?.length > 0 ? ( */}
+            {/* <AudioPlayer
               className="rounded-lg"
               autoPlay={false}
               src={audioUrl}
@@ -310,166 +311,186 @@ export default function Home() {
                 setCurrentAudioTime(e?.target?.currentTime);
               }}
             /> */}
-          {/* ) : null} */}
-          {/* </div> */}
-          {segments?.length > 0 && isTranscribing == false ? (
-            <div className="mx-auto py-4 w-full">
-              <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
-                {" "}
-                {segments?.map((segment: any, index: any) => (
-                  <li
-                    className="pb-3 sm:pb-4 px-6 py-4 relative border-b border-stone-200 w-full rounded-t-lg flex flex-col gap-2"
-                    key={index}
-                  >
-                    {/* add a circular button to the top right corner */}
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-1 min-w-0">
-                        {/* map through the words array in each segment */}
-                        <div className="flex flex-row items-center gap-1">
-                          {segment?.text}
-                        </div>
-                      </div>
-                      <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 ring-1 ring-stone-200 rounded text-stone-900 dark:text-white select-none">
-                        <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
-                          <span>
-                            🎙{" "}
-                            {segment?.timestamp?.length > 0
-                              ? formatDuration(segment?.timestamp[0])
-                              : null}
-                          </span>
-                        </div>
-                        <span className="text-stone-600 py-1 px-1"> - </span>
-                        <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
-                          <span>
-                            {" "}
-                            {segment?.timestamp?.length > 0
-                              ? formatDuration(segment?.timestamp[1])
-                              : null}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">
-                      {index}
-                    </div>
-                    <div className="flex flex-row gap-2 items-center">
-                      <input
-                        type="text"
-                        className="px-2 gap-1 w-1/4 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded transition duration-300"
-                        onChange={(e) => {
-                          setAnalyzeText(e.target.value);
-                        }}
-                        placeholder="Ask a question..."
-                      />
-                      <button
-                        onClick={() => {
-                          setPoeTextRes("");
-                          setCurrentSegmentIndex(index);
-                          poe(`"${segment?.text}" ${analyzeText}`);
-                        }}
-                        className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                      >
-                        Quick Analyze
-                        <HiLightningBolt className="w-3 h-3" />
-                      </button>
-                      {/* create a radio with two buttons like the one above with only an icon and it's a square */}
-                      <button
-                        onClick={() => {
-                          setPoeModel("a2");
-                        }}
-                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                        style={{
-                          filter: `grayscale(${
-                            poeModel == "a2" ? "0%" : "100%"
-                          })`,
-                        }}
-                      >
-                        <Image
-                          src={
-                            "https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FanthropicAvatarBeige.426c3b88.png&w=96&q=75"
-                          }
-                          alt="claude"
-                          width="0"
-                          height="0"
-                          sizes="100vw"
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setPoeModel("capybara");
-                        }}
-                        className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                        style={{
-                          filter: `grayscale(${
-                            poeModel == "capybara" ? "0%" : "100%"
-                          })`,
-                        }}
-                      >
-                        <Image
-                          src={
-                            "https://poe.com/_next/image?url=/_next/static/media/chatGPTAvatar.04ed8443.png&w=96&q=75"
-                          }
-                          alt="chatgpt"
-                          width="0"
-                          height="0"
-                          sizes="100vw"
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      </button>
-                      {isAnalyzing && currentSegmentIndex === index ? (
-                        <div className="animate-spin">
-                          <div className="animate-spin">
-                            <CgSpinner className="animate-spin text-stone-500" />
+            {/* ) : null} */}
+            {/* </div> */}
+            {segments?.length > 0 && isTranscribing == false ? (
+              <div className="mx-auto py-4 w-full">
+                <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
+                  {" "}
+                  {segments?.map((segment: any, index: any) => (
+                    <li
+                      className="pb-3 sm:pb-4 px-6 py-4 relative border-b border-stone-200 w-full rounded-t-lg flex flex-col gap-2"
+                      key={index}
+                    >
+                      {/* add a circular button to the top right corner */}
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-1 min-w-0">
+                          {/* map through the words array in each segment */}
+                          <div className="flex flex-row items-center gap-1">
+                            {segment?.text}
                           </div>
                         </div>
+                        <div className="sm:inline-flex sm:flex-row items-center text-xs bg-stone-100 ring-1 ring-stone-200 rounded text-stone-900 dark:text-white select-none">
+                          <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-l text-right transition ease-in-out duration-700">
+                            <span>
+                              🎙{" "}
+                              {segment?.timestamp?.length > 0
+                                ? formatDuration(segment?.timestamp[0])
+                                : null}
+                            </span>
+                          </div>
+                          <span className="text-stone-600 py-1 px-1"> - </span>
+                          <div className="hover:bg-stone-200 text-stone-600 py-1 px-1.5 rounded-r text-right transition ease-in-out duration-700">
+                            <span>
+                              {" "}
+                              {segment?.timestamp?.length > 0
+                                ? formatDuration(segment?.timestamp[1])
+                                : null}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">
+                        {index}
+                      </div>
+                      <div className="flex flex-row gap-2 items-center">
+                        <input
+                          type="text"
+                          className="px-2 gap-1 w-1/3 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded transition duration-300"
+                          onChange={(e) => {
+                            setAnalyzeText(e.target.value);
+                          }}
+                          placeholder="Ask a question..."
+                        />
+                        <button
+                          onClick={() => {
+                            setPoeTextRes("");
+                            setCurrentSegmentIndex(index);
+                            poe(`"${segment?.text}" ${analyzeText}`);
+                          }}
+                          className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
+                        >
+                          Quick Analyze
+                          <HiLightningBolt className="w-3 h-3" />
+                        </button>
+                        {/* create a radio with two buttons like the one above with only an icon and it's a square */}
+                        <button
+                          onClick={() => {
+                            setPoeModel("a2");
+                          }}
+                          className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
+                          style={{
+                            filter: `grayscale(${
+                              poeModel == "a2" ? "0%" : "100%"
+                            })`,
+                          }}
+                        >
+                          <Image
+                            src={
+                              "https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FanthropicAvatarBeige.426c3b88.png&w=96&q=75"
+                            }
+                            alt="claude"
+                            width="0"
+                            height="0"
+                            sizes="100vw"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPoeModel("capybara");
+                          }}
+                          className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
+                          style={{
+                            filter: `grayscale(${
+                              poeModel == "capybara" ? "0%" : "100%"
+                            })`,
+                          }}
+                        >
+                          <Image
+                            src={
+                              "https://poe.com/_next/image?url=/_next/static/media/chatGPTAvatar.04ed8443.png&w=96&q=75"
+                            }
+                            alt="chatgpt"
+                            width="0"
+                            height="0"
+                            sizes="100vw"
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        </button>
+                        {isAnalyzing && currentSegmentIndex === index ? (
+                          <div className="animate-spin">
+                            <div className="animate-spin">
+                              <CgSpinner className="animate-spin text-stone-500" />
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                      {poeTextRes && currentSegmentIndex === index ? (
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500">
+                          {poeTextRes}
+                        </span>
                       ) : null}
-                    </div>
-                    {poeTextRes && currentSegmentIndex === index ? (
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500">
-                        {poeTextRes}
-                      </span>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : // ) : isTranscribing &&
-          //   (transcribeProgress == 0 ||
-          //     Number.isNaN(Number(transcribeProgress))) &&
-          //   Object.keys(progress).length == 1 ? (
-          //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
-          //     Downloading{" "}
-          //     <div className="animate-spin">
-          //       <div className="animate-spin">
-          //         <CgSpinner className="animate-spin" />
-          //       </div>
-          //     </div>
-          //   </p>
-          // ) : progress["total_segments"] >= 0 &&
-          //   progress["done_segments"] <= 0 ? (
-          //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
-          //     Loading {progress["total_segments"]} Segments
-          //     <div className="animate-spin">
-          //       <div className="animate-spin">
-          //         <CgSpinner className="animate-spin" />
-          //       </div>
-          //     </div>
-          //   </p>
-          isTranscribing ? (
-            <p className="text-amber-500 items-center w-full mt-2 justify-center font-medium inline-flex gap-2">
-              Transcribing{" "}
-              <div className="animate-spin">
-                <div className="animate-spin">
-                  <CgSpinner className="animate-spin" />
-                </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </p>
-          ) : (
-            <p className="text-stone-400 items-center flex w-full justify-center pt-4">
-              No transcript
-            </p>
-          )}
+            ) : // ) : isTranscribing &&
+            //   (transcribeProgress == 0 ||
+            //     Number.isNaN(Number(transcribeProgress))) &&
+            //   Object.keys(progress).length == 1 ? (
+            //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+            //     Downloading{" "}
+            //     <div className="animate-spin">
+            //       <div className="animate-spin">
+            //         <CgSpinner className="animate-spin" />
+            //       </div>
+            //     </div>
+            //   </p>
+            // ) : progress["total_segments"] >= 0 &&
+            //   progress["done_segments"] <= 0 ? (
+            //   <p className="text-orange-500 items-center w-full justify-center font-medium inline-flex gap-2">
+            //     Loading {progress["total_segments"]} Segments
+            //     <div className="animate-spin">
+            //       <div className="animate-spin">
+            //         <CgSpinner className="animate-spin" />
+            //       </div>
+            //     </div>
+            //   </p>
+            isTranscribing ? (
+              <p className="text-amber-500 items-center w-full mt-2 justify-center font-medium inline-flex gap-2">
+                Transcribing{" "}
+                <div className="animate-spin">
+                  <div className="animate-spin">
+                    <CgSpinner className="animate-spin" />
+                  </div>
+                </div>
+              </p>
+            ) : (
+              <p className="text-stone-400 items-center flex w-full justify-center pt-4">
+                No transcript
+              </p>
+            )}
+          </div>
+          {/* <div className="flex w-96 flex-col gap-4 border border-stone-200 rounded-md mt-16 p-6">
+            <div className="flex flex-row gap-2">
+              <input
+                type="text"
+                className="px-3 gap-1 w-full text-sm h-10 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded transition duration-300"
+                onChange={(e) => {
+                  setAnalyzeText(e.target.value);
+                }}
+                placeholder="Ask a question..."
+              />
+              <button
+                className="w-12 inline-flex items-center justify-center outline-none select-none ring-amber-500 bg-amber-500 text-white font-bold rounded-md shadow-sm hover:bg-amber-600 active:bg-amber-700 transition duration-300"
+                onClick={() => poe(text + " " + analyzeText)}
+              >
+                <TbMessage2 className="w-5 h-5" />
+              </button>
+            </div>
+            <span className="text-stone-600">{poeTextRes}</span>
+          </div> */}
         </div>
       </div>
     </div>
