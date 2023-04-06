@@ -222,7 +222,7 @@ export default function Home() {
             {/* make an input with a button */}
             <input
               type="text"
-              className="w-full h-12 pl-4 border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
+              className="w-full h-12 pl-4 select-none border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded-md transition duration-300"
               placeholder="Video URL"
               onChange={(e) => setVideoUrl(e.target.value)}
             />
@@ -319,7 +319,7 @@ export default function Home() {
                   {" "}
                   {segments?.map((segment: any, index: any) => (
                     <li
-                      className="pb-3 bg-white border-b border-stone-200 text-stone-700 sm:pb-4 py-4 relative w-full flex flex-col gap-2"
+                      className="px-6 py-6 rounded-lg odd:bg-white even:bg-stone-50 text-stone-700 sm:pb-4 relative w-full flex flex-col justify-center gap-2"
                       key={index}
                     >
                       {/* add a circular button to the top right corner */}
@@ -350,84 +350,12 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className="absolute bottom-0 right-0 p-3 text-xs text-stone-300">
+                      <div className="absolute bottom-0 select-none right-0 p-3 text-xs text-stone-300">
                         {index}
                       </div>
-                      <div className="flex flex-row gap-2 items-center">
-                        <input
-                          type="text"
-                          className="px-2 gap-1 w-1/3 text-xs h-6 inline-flex items-center justify-center border-none hover:ring-stone-300 shadow-sm ring-1 ring-stone-200 focus:ring-amber-500 focus:ring-2 outline-none rounded transition duration-300"
-                          onChange={(e) => {
-                            setAnalyzeText(e.target.value);
-                          }}
-                          placeholder="Ask a question..."
-                        />
-                        <button
-                          onClick={() => {
-                            setPoeTextRes("");
-                            setCurrentSegmentIndex(index);
-                            poe(`"${segment?.text}" ${analyzeText}`);
-                          }}
-                          className="px-2 select-none gap-1 text-xs h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                        >
-                          Quick Analyze
-                          <HiLightningBolt className="w-3 h-3" />
-                        </button>
-                        {/* create a radio with two buttons like the one above with only an icon and it's a square */}
-                        <button
-                          onClick={() => {
-                            setPoeModel("a2");
-                          }}
-                          className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                          style={{
-                            filter: `grayscale(${
-                              poeModel == "a2" ? "0%" : "100%"
-                            })`,
-                          }}
-                        >
-                          <Image
-                            src={
-                              "https://poe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FanthropicAvatarBeige.426c3b88.png&w=96&q=75"
-                            }
-                            alt="claude"
-                            width="0"
-                            height="0"
-                            sizes="100vw"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setPoeModel("capybara");
-                          }}
-                          className="gap-1 select-none text-xs overflow-hidden w-6 h-6 inline-flex items-center justify-center outline-none bg-stone-100 hover:bg-stone-200 border-none ring-1 focus:ring-2 focus:ring-amber-500 ring-stone-300 hover:ring-stone-400 text-stone-500 font-medium rounded shadow-sm transition duration-300"
-                          style={{
-                            filter: `grayscale(${
-                              poeModel == "capybara" ? "0%" : "100%"
-                            })`,
-                          }}
-                        >
-                          <Image
-                            src={
-                              "https://poe.com/_next/image?url=/_next/static/media/chatGPTAvatar.04ed8443.png&w=96&q=75"
-                            }
-                            alt="chatgpt"
-                            width="0"
-                            height="0"
-                            sizes="100vw"
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        </button>
-                        {isAnalyzing && currentSegmentIndex === index ? (
-                          <div className="animate-spin">
-                            <div className="animate-spin">
-                              <CgSpinner className="animate-spin text-stone-500" />
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
+
                       {poeTextRes && currentSegmentIndex === index ? (
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500">
                           {poeTextRes}
                         </span>
                       ) : null}
