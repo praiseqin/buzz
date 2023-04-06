@@ -314,12 +314,12 @@ export default function Home() {
             {/* ) : null} */}
             {/* </div> */}
             {segments?.length > 0 && isTranscribing == false ? (
-              <div className="mx-auto py-4 w-full">
-                <ul className="bg-white rounded-lg border border-stone-200 sm:w-384 text-stone-900">
+              <div className="mx-auto py-2 w-full">
+                <ul className="bg-white text-stone-900">
                   {" "}
                   {segments?.map((segment: any, index: any) => (
                     <li
-                      className="pb-3 sm:pb-4 px-6 py-4 relative border-b border-stone-200 w-full rounded-t-lg flex flex-col gap-2"
+                      className="pb-3 bg-white border-b border-stone-200 text-stone-700 sm:pb-4 py-4 relative w-full flex flex-col gap-2"
                       key={index}
                     >
                       {/* add a circular button to the top right corner */}
